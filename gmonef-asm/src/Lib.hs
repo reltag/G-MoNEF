@@ -17,3 +17,11 @@ instance Show GMoNEFVersion where
 		intercalate "." . map show $
 			[major, minor, yearmonth]
 
+-- SEGM asmline-attoparsec
+
+data AsmLine = AsmLine
+	{ instr :: String
+	}
+
+parseAsmLine :: String -> AsmLine
+
