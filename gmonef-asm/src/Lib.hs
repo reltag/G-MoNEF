@@ -20,8 +20,35 @@ instance Show GMoNEFVersion where
 -- SEGM asmline-attoparsec
 
 data AsmLine = AsmLine
-	{ instr :: String
+	{ instructionOp :: AsmOp
+	, instructionParams :: [RegID]
+	, instructionAlters :: [RegID]
 	}
+
+data RegID
+	= InstructionR InstructionRegister
+	| Deref RegIDPtr
+
+data InstructionRegister = InstructionRegister
+	{ extended :: InstructionRegisterExtended
+	, refType :: InstructionRegisterRefType
+	}
+
+data InstructionRegisterExtended
+	= ExtendedEAX
+	| ExtendedEBX
+	| ExtendedECX
+	| ExtendedEDX
+
+data InstructionRegisterRefType
+	= RegisterExtended
+	| RegisterLow
+	| RegisterHigh
+
+data RegIDPtr
+	= PtrAt RegID
+	| PtrOffset RegIDPtr RegIDPtr
+	| PtrRawValue Int
 
 parseAsmLine :: String -> AsmLine
 
