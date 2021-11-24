@@ -32,8 +32,10 @@ data AsmOp = AsmOp
 
 data AsmOperator
 	= NoOp
-	| AsmLevelOp String
+	| InvokeInsSet InsSetItem
 	| InvokeWinAPI WinAPIItem
+
+type InsSetItem = String
 
 type WinAPIItem = String
 
