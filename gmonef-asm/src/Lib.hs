@@ -25,6 +25,18 @@ data AsmLine = AsmLine
 	, instructionAlters :: [RegID]
 	}
 
+data AsmOp = AsmOp
+	{ operator :: AsmOperator
+	, redir :: [(RegID, RegID)]
+	}
+
+data AsmOperator
+	= NoOp
+	| AsmLevelOp String
+	| InvokeWinAPI WinAPIItem
+
+type WinAPIItem = String
+
 data RegID
 	= InstructionR InstructionRegister
 	| Deref RegIDPtr
