@@ -27,7 +27,7 @@ data AsmLine = AsmLine
 
 data AsmOp = AsmOp
 	{ operator :: AsmOperator
-	, redir :: [(RegID, RegID)]
+	, redir :: RedirList
 	}
 
 data AsmOperator
@@ -64,7 +64,17 @@ data RegIDPtr
 	| PtrOffset RegIDPtr RegIDPtr
 	| PtrRawValue Int
 
+type RedirList = [(RegID, RegID)]
+
 parseAsmLine :: String -> AsmLine
+
+movRedir :: RegID -> RegID -> RedirList
+movRedir target x =
+	[(x, target)]
+
+xchgRedir :: RegID -> RegID -> RedirList
+xchgRedir a b =
+	(a, b) : (b, a) : []
 
 readInstructionRegister :: String -> Maybe InstructionRegister
 readInstructionRegister str =
