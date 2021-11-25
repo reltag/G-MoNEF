@@ -66,3 +66,69 @@ data RegIDPtr
 
 parseAsmLine :: String -> AsmLine
 
+readInstructionRegister :: String -> Maybe InstructionRegister
+readInstructionRegister str =
+	case str of
+		"eax" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEAX
+				, refType = RegisterExtended
+				}
+		"ebx" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEBX
+				, refType = RegisterExtended
+				}
+		"ecx" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedECX
+				, refType = RegisterExtended
+				}
+		"edx" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEDX
+				, refType = RegisterExtended
+				}
+		"al" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEAX
+				, refType = RegisterLow
+				}
+		"ah" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEAX
+				, refType = RegisterHigh
+				}
+		"bl" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEBX
+				, refType = RegisterLow
+				}
+		"bh" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEBX
+				, refType = RegisterHigh
+				}
+		"cl" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedECX
+				, refType = RegisterLow
+				}
+		"ch" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedECX
+				, refType = RegisterHigh
+				}
+		"dl" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEDX
+				, refType = RegisterLow
+				}
+		"dh" ->
+			Just $ InstructionRegister
+				{ extended = ExtendedEDX
+				, refType = RegisterHigh
+				}
+		_ ->
+			None
+
