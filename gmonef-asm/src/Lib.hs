@@ -86,28 +86,44 @@ type RedirList = [(RegID, RegID)]
 
 parseAsmLine :: Parser AsmLine
 
+parseStackPtr :: Parser StackPtrType
+parseStackPtr =
+	string <|$>~
+		[ ("esp", StackPtrNorm)
+		, ("ebp", StackPtrBase)
+		]
+
 parseInstructionRegister :: Parser InstructionRegister
 parseInstructionRegister =
-	choice $
-		uncurry ($>) . first string <$>
-			[ ("eax", InstructionRegister ExtendedEAX RegisterExtended)
-			, ("ebx", InstructionRegister ExtendedEBX RegisterExtended)
-			, ("ecx", InstructionRegister ExtendedECX RegisterExtended)
-			, ("ecx", InstructionRegister ExtendedEDX RegisterExtended)
-			, ("al", InstructionRegister ExtendedEAX RegisterLow)
-			, ("ah", InstructionRegister ExtendedEAX RegisterHigh)
-			, ("bl", InstructionRegister ExtendedEBX RegisterLow)
-			, ("bh", InstructionRegister ExtendedEBX RegisterHigh)
-			, ("cl", InstructionRegister ExtendedECX RegisterLow)
-			, ("ch", InstructionRegister ExtendedECX RegisterHigh)
-			, ("dl", InstructionRegister ExtendedEDX RegisterLow)
-			, ("dh", InstructionRegister ExtendedEDX RegisterHigh)
-			]
+	string <|$>~
+		[ ("eax", InstructionRegister ExtendedEAX RegisterExtended)
+		, ("ebx", InstructionRegister ExtendedEBX RegisterExtended)
+		, ("ecx", InstructionRegister ExtendedECX RegisterExtended)
+		, ("ecx", InstructionRegister ExtendedEDX RegisterExtended)
+		, ("al", InstructionRegister ExtendedEAX RegisterLow)
+		, ("ah", InstructionRegister ExtendedEAX RegisterHigh)
+		, ("bl", InstructionRegister ExtendedEBX RegisterLow)
+		, ("bh", InstructionRegister ExtendedEBX RegisterHigh)
+		, ("cl", InstructionRegister ExtendedECX RegisterLow)
+		, ("ch", InstructionRegister ExtendedECX RegisterHigh)
+		, ("dl", InstructionRegister ExtendedEDX RegisterLow)
+		, ("dh", InstructionRegister ExtendedEDX RegisterHigh)
+		]
+
+(<|$>~) ::
+	(Foldable t, Alternative f, Functor f) =>
+		(f a -> f b) -> t (f a, c) -> f c
+(<|$>~) f x =
+	asum $ uncurry ($>) . first f <$> x
 
 {-
-	($>) :: (Functor f) => f a -> b -> f b
+	asum :: (Foldable t, Alternative f) => t (f a) -> f a
+	($) :: (a -> b) -> a -> b
 	uncurry :: (a -> b -> c) -> (a, b) -> c
+	($>) :: (Functor f) => f a -> b -> f b
+	(.) :: (b -> c) -> (a -> b) -> a -> c
 	first :: (Arrow a) => a b c -> a (b, d) (c, d)
+	(<$>) :: (Functor f) => (a -> b) -> f a -> f b
 -}
 
 movRedir :: RegID -> RegID -> RedirList
