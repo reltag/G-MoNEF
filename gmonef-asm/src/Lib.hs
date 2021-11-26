@@ -55,7 +55,7 @@ type WinAPIItem = String
 data RegID
 	= InstructionR InstructionRegister
 	| StackPtr StackPtrType
-	| Deref RegIDPtr
+	| RegDeref RegIDPtr
 
 data InstructionRegister = InstructionRegister
 	{ extended :: InstructionRegisterExtended
@@ -77,6 +77,9 @@ data StackPtrType
 	= StackPtrNorm
 	| StackPtrBase
 
+newtype RegDynamicDeref = RegDynamicDeref
+	{ ptr :: RegIDPtr }
+
 data RegIDPtr
 	= PtrAt RegID
 	| PtrOffset RegIDPtr RegIDPtr
@@ -86,6 +89,19 @@ type RedirList = [(RegID, RegID)]
 
 parseAsmLine :: Parser AsmLine
 
+parseRegID :: Parser RegID
+parseRegID =
+	(InstructionR <$> parseInstructionRegister)	<|>
+	(StackPtr <$> parseStackPtr)			<|>
+	(RegDeref <$> parseRegDynamicDeref)
+
+parseRegDynamicDeref :: Parser RegDynamicDeref
+parseRegDynamicDeref = do
+	char '['
+	ptrM <- parseRegIDPtr
+	char ']'
+	return $ RegDynamicDeref { ptr = ptrM }
+
 parseStackPtr :: Parser StackPtrType
 parseStackPtr =
 	string <|$>~
@@ -94,7 +110,7 @@ parseStackPtr =
 		]
 
 parseInstructionRegister :: Parser InstructionRegister
-parseInstructionRegister =
+parseInstructionRegister 
 	string <|$>~
 		[ ("eax", InstructionRegister ExtendedEAX RegisterExtended)
 		, ("ebx", InstructionRegister ExtendedEBX RegisterExtended)
