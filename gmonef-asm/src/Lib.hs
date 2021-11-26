@@ -2,8 +2,21 @@ module Lib
     ( getGMoNEF_version
     ) where
 
+{-/ require module "attoparsec" /-}
+import Data.Attoparsec.ByteString
+
+{-/ from builtins /-}
 import Data.Function
 import Data.List
+
+{-/ from builtins "Functor" /-}
+import Data.Functor
+
+{-/ from builtins "Applicative" /-}
+import Control.Applicative
+
+{-/ from builtins "Monad" /-}
+import Control.Monad
 
 -- major.minor.monthyear
 data GMoNEFVersion = GMoNEFVersion Int Int Int
@@ -66,7 +79,25 @@ data RegIDPtr
 
 type RedirList = [(RegID, RegID)]
 
-parseAsmLine :: String -> AsmLine
+parseAsmLine :: Parser AsmLine
+
+parseInstructionRegister :: Parser InstructionRegister
+parseInstructionRegister =
+	choice $
+		uncurry ($>) . first string <$>
+			[ ("eax", InstructionRegister ExtendedEAX RegisterExtended)
+			, ("ebx", InstructionRegister ExtendedEBX RegisterExtended)
+			, ("ecx", InstructionRegister ExtendedECX RegisterExtended)
+			, ("ecx", InstructionRegister ExtendedEDX RegisterExtended)
+			, ("al", InstructionRegister ExtendedEAX RegisterLow)
+			, ("ah", InstructionRegister ExtendedEAX RegisterHigh)
+			, ("bl", InstructionRegister ExtendedEBX RegisterLow)
+			, ("bh", InstructionRegister ExtendedEBX RegisterHigh)
+			, ("cl", InstructionRegister ExtendedECX RegisterLow)
+			, ("ch", InstructionRegister ExtendedECX RegisterHigh)
+			, ("dl", InstructionRegister ExtendedEDX RegisterLow)
+			, ("dh", InstructionRegister ExtendedEDX RegisterHigh)
+			]
 
 movRedir :: RegID -> RegID -> RedirList
 movRedir target x =
@@ -75,70 +106,4 @@ movRedir target x =
 xchgRedir :: RegID -> RegID -> RedirList
 xchgRedir a b =
 	(a, b) : (b, a) : []
-
-readInstructionRegister :: String -> Maybe InstructionRegister
-readInstructionRegister str =
-	case str of
-		"eax" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEAX
-				, refType = RegisterExtended
-				}
-		"ebx" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEBX
-				, refType = RegisterExtended
-				}
-		"ecx" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedECX
-				, refType = RegisterExtended
-				}
-		"edx" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEDX
-				, refType = RegisterExtended
-				}
-		"al" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEAX
-				, refType = RegisterLow
-				}
-		"ah" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEAX
-				, refType = RegisterHigh
-				}
-		"bl" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEBX
-				, refType = RegisterLow
-				}
-		"bh" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEBX
-				, refType = RegisterHigh
-				}
-		"cl" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedECX
-				, refType = RegisterLow
-				}
-		"ch" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedECX
-				, refType = RegisterHigh
-				}
-		"dl" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEDX
-				, refType = RegisterLow
-				}
-		"dh" ->
-			Just $ InstructionRegister
-				{ extended = ExtendedEDX
-				, refType = RegisterHigh
-				}
-		_ ->
-			None
 
