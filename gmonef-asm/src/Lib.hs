@@ -87,6 +87,7 @@ data RegIDPtr
 
 type RedirList = [(RegID, RegID)]
 
+{-/ impl TODO /-}
 parseAsmLine :: Parser AsmLine
 
 parseRegID :: Parser RegID
