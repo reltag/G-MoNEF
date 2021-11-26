@@ -112,7 +112,7 @@ parseInstructionRegister =
 
 (<|$>~) ::
 	(Foldable t, Alternative f, Functor f) =>
-		(f a -> f b) -> t (f a, c) -> f c
+		(a -> f b) -> t (a, c) -> f c
 (<|$>~) f x =
 	asum $ uncurry ($>) . first f <$> x
 
