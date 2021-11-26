@@ -99,6 +99,12 @@ parseInstructionRegister =
 			, ("dh", InstructionRegister ExtendedEDX RegisterHigh)
 			]
 
+{-
+	($>) :: (Functor f) => f a -> b -> f b
+	uncurry :: (a -> b -> c) -> (a, b) -> c
+	first :: (Arrow a) => a b c -> a (b, d) (c, d)
+-}
+
 movRedir :: RegID -> RegID -> RedirList
 movRedir target x =
 	[(x, target)]
