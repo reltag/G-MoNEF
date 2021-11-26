@@ -54,6 +54,7 @@ type WinAPIItem = String
 
 data RegID
 	= InstructionR InstructionRegister
+	| StackPtr StackPtrType
 	| Deref RegIDPtr
 
 data InstructionRegister = InstructionRegister
@@ -71,6 +72,10 @@ data InstructionRegisterRefType
 	= RegisterExtended
 	| RegisterLow
 	| RegisterHigh
+
+data StackPtrType
+	= StackPtrNorm
+	| StackPtrBase
 
 data RegIDPtr
 	= PtrAt RegID
